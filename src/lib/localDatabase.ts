@@ -116,39 +116,44 @@ export const generateRandomLetters = (rows: number, cols: number): string[][] =>
 
 // Game operations
 export const createGame = (greenTeamName: string, redTeamName: string): Game => {
-  const id = generateNumericCode(6)
-  const letters = generateRandomLetters(7, 7)
+  try {
+    const id = generateNumericCode(6)
+    const letters = generateRandomLetters(7, 7)
 
-  const game: Game = {
-    id,
-    green_team_name: greenTeamName,
-    red_team_name: redTeamName,
-    current_state: {
-      board: Array.from({ length: 7 }, () => Array(7).fill("")),
-      greenScore: 0,
-      redScore: 0,
-      letters: letters,
-    },
-    current_team: "green",
-    winner: null,
+    const game: Game = {
+      id,
+      green_team_name: greenTeamName,
+      red_team_name: redTeamName,
+      current_state: {
+        board: Array.from({ length: 7 }, () => Array(7).fill("")),
+        greenScore: 0,
+        redScore: 0,
+        letters: letters,
+      },
+      current_team: "green",
+      winner: null,
+    }
+
+    db.games.set(id, game)
+
+    // Create buzzer state
+    const buzzerState: BuzzerState = {
+      game_id: id,
+      active: true,
+      buzzed_team: null,
+      buzzed_player: null,
+      buzzed_at: null,
+    }
+
+    db.buzzer_states.set(id, buzzerState)
+    db.players.set(id, [])
+
+    saveToLocalStorage()
+    return game
+  } catch (error) {
+    console.error("Error in createGame:", error)
+    throw new Error("Failed to create game")
   }
-
-  db.games.set(id, game)
-
-  // Create buzzer state
-  const buzzerState: BuzzerState = {
-    game_id: id,
-    active: true,
-    buzzed_team: null,
-    buzzed_player: null,
-    buzzed_at: null,
-  }
-
-  db.buzzer_states.set(id, buzzerState)
-  db.players.set(id, [])
-
-  saveToLocalStorage()
-  return game
 }
 
 // Get all games (for debugging)

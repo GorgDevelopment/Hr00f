@@ -2,7 +2,7 @@ import type React from "react"
 import { useState } from "react"
 import { Users, LogIn } from "lucide-react"
 import FallingLetters from "../components/FallingLetters"
-import { createGame, getGame } from "../lib/api"
+import { createGame, getGame } from "../lib/localDatabase"
 
 interface HomeProps {
   onCreateRoom: (code: string) => void
@@ -14,8 +14,8 @@ const Home: React.FC<HomeProps> = ({ onCreateRoom, onJoinRoom }) => {
   const [username, setUsername] = useState("")
   const [error, setError] = useState("")
   const [showTeamNames, setShowTeamNames] = useState(false)
-  const [greenTeamName, setGreenTeamName] = useState("الفريق الأخضر")
-  const [redTeamName, setRedTeamName] = useState("الفريق الأحمر")
+  const [greenTeamName, setGreenTeamName] = useState("Green Team")
+  const [redTeamName, setRedTeamName] = useState("Red Team")
   const [isLoading, setIsLoading] = useState(false)
 
   const handleCreateRoom = async () => {
@@ -27,7 +27,10 @@ const Home: React.FC<HomeProps> = ({ onCreateRoom, onJoinRoom }) => {
 
       setIsLoading(true)
       try {
-        const game = await createGame(greenTeamName, redTeamName)
+        const game = createGame(greenTeamName, redTeamName)
+        if (!game || !game.id) {
+          throw new Error("Failed to create game room")
+        }
         onCreateRoom(game.id)
       } catch (err: any) {
         console.error("Error creating room:", err)
@@ -49,7 +52,10 @@ const Home: React.FC<HomeProps> = ({ onCreateRoom, onJoinRoom }) => {
     setIsLoading(true)
     try {
       const trimmedCode = joinCode.trim()
-      await getGame(trimmedCode)
+      const game = getGame(trimmedCode)
+      if (!game) {
+        throw new Error("Game not found")
+      }
       onJoinRoom(trimmedCode, username)
     } catch (err: any) {
       console.error("Error joining room:", err)
@@ -70,10 +76,10 @@ const Home: React.FC<HomeProps> = ({ onCreateRoom, onJoinRoom }) => {
 
       <div className="max-w-md w-full space-y-8 relative z-10">
         <div className="text-center">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent mb-2 arabic-text">
-          مسابقة الحروف
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent mb-2">
+            Letters Competition
           </h1>
-          <p className="text-gray-400 arabic-text">أنشئ أو انضم إلى غرفة لعب للبدء!</p>
+          <p className="text-gray-400">Create or join a game room to start!</p>
         </div>
 
         <div className="space-y-4">
@@ -90,33 +96,33 @@ const Home: React.FC<HomeProps> = ({ onCreateRoom, onJoinRoom }) => {
               ) : (
                 <Users className="w-5 h-5" />
               )}
-              <span className="arabic-text">إنشاء غرفة جديدة</span>
+              <span>Create New Room</span>
             </button>
           ) : (
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-800 to-purple-700 rounded-xl opacity-50" />
               <div className="relative bg-gray-800 p-6 rounded-xl space-y-4">
-                <h3 className="text-xl font-bold text-center mb-4 arabic-text">أسماء الفرق</h3>
+                <h3 className="text-xl font-bold text-center mb-4">Team Names</h3>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-300 arabic-text">اسم الفريق الأخضر</label>
+                  <label className="block text-sm font-medium text-gray-300">Green Team Name</label>
                   <input
                     type="text"
                     value={greenTeamName}
                     onChange={(e) => setGreenTeamName(e.target.value)}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 text-right"
-                    placeholder="الفريق الأخضر"
+                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="Green Team"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-300 arabic-text">اسم الفريق الأحمر</label>
+                  <label className="block text-sm font-medium text-gray-300">Red Team Name</label>
                   <input
                     type="text"
                     value={redTeamName}
                     onChange={(e) => setRedTeamName(e.target.value)}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 text-right"
-                    placeholder="الفريق الأحمر"
+                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    placeholder="Red Team"
                   />
                 </div>
 
@@ -124,20 +130,20 @@ const Home: React.FC<HomeProps> = ({ onCreateRoom, onJoinRoom }) => {
                   <button
                     onClick={() => setShowTeamNames(false)}
                     disabled={isLoading}
-                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg transition-all duration-300 arabic-text disabled:opacity-70"
+                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg transition-all duration-300 disabled:opacity-70"
                   >
-                    رجوع
+                    Back
                   </button>
                   <button
                     onClick={handleCreateRoom}
                     disabled={isLoading}
                     className="flex-1 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 
-                      text-white px-4 py-3 rounded-lg transition-all duration-300 arabic-text disabled:opacity-70"
+                      text-white px-4 py-3 rounded-lg transition-all duration-300 disabled:opacity-70"
                   >
                     {isLoading ? (
                       <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mx-auto"></div>
                     ) : (
-                      "إنشاء"
+                      "Create"
                     )}
                   </button>
                 </div>
@@ -149,24 +155,24 @@ const Home: React.FC<HomeProps> = ({ onCreateRoom, onJoinRoom }) => {
             <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl opacity-50" />
             <div className="relative bg-gray-800 p-6 rounded-xl space-y-4">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-300 arabic-text">كود الغرفة</label>
+                <label className="block text-sm font-medium text-gray-300">Room Code</label>
                 <input
                   type="text"
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
-                  placeholder="أدخل كود الغرفة"
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter room code"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-300 arabic-text">اسم المستخدم</label>
+                <label className="block text-sm font-medium text-gray-300">Username</label>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
-                  placeholder="أدخل اسم المستخدم"
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter username"
                 />
               </div>
 
@@ -182,12 +188,12 @@ const Home: React.FC<HomeProps> = ({ onCreateRoom, onJoinRoom }) => {
                 ) : (
                   <LogIn className="w-5 h-5" />
                 )}
-                <span className="arabic-text">انضم للغرفة</span>
+                <span>Join Room</span>
               </button>
             </div>
           </div>
 
-          {error && <div className="text-red-500 text-center text-sm arabic-text">{error}</div>}
+          {error && <div className="text-red-500 text-center text-sm">{error}</div>}
         </div>
       </div>
     </div>

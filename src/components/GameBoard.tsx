@@ -67,12 +67,14 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, letters, isHost, onTileUpd
     }
 
     .honeycomb-grid {
-      --s: 100px;
+      --s: 90px;
       --gap: 2px;
       --h: calc(var(--s) * 1.1547);
       display: flex;
       flex-direction: column;
       padding-top: calc(var(--h)/4 + var(--gap)/2);
+      margin: 0 auto;
+      width: fit-content;
     }
 
     .honeycomb-row {
@@ -149,6 +151,18 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, letters, isHost, onTileUpd
     .dot-button:hover {
       transform: scale(1.2);
     }
+
+    @media (max-width: 768px) {
+      .honeycomb-grid {
+        --s: 70px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .honeycomb-grid {
+        --s: 100px;
+      }
+    }
   `}
       </style>
 
@@ -158,7 +172,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, letters, isHost, onTileUpd
         <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full w-1/2 h-1/2 mx-auto my-auto"></div>
         <div className="absolute inset-0 bg-purple-500/20 blur-3xl rounded-full w-1/3 h-1/3 mx-auto my-auto animate-pulse"></div>
 
-        <div className="honeycomb-grid relative z-10">
+        <div className="honeycomb-grid relative z-10 mx-auto">
           {board.map((row, rowIndex) => (
             <div key={`row-${rowIndex}`} className="honeycomb-row">
               {row.map((tile, colIndex) => {

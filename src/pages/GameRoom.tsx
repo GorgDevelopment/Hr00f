@@ -369,10 +369,10 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
         <div className="text-center p-8 max-w-md">
-          <div className="text-red-500 text-2xl mb-4">Error</div>
-          <div className="mb-6">{error}</div>
-          <button onClick={onLeaveRoom} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
-            Return to Home
+          <div className="text-red-500 text-2xl mb-4 arabic-text">خطأ</div>
+          <div className="mb-6 arabic-text">{error}</div>
+          <button onClick={onLeaveRoom} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg arabic-text">
+            العودة إلى الصفحة الرئيسية
           </button>
         </div>
       </div>
@@ -383,7 +383,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
   if (!initialized) {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <div className="text-2xl">Loading...</div>
+        <div className="text-2xl arabic-text">جارٍ التحميل...</div>
       </div>
     )
   }
@@ -487,8 +487,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
           </div>
         )}
 
-        {/* Header with scores and room code */}
-        <div className="flex justify-between items-center mb-6">
+        {/* Game Header */}
+        <div className="flex justify-between items-center mb-4">
           {/* Red Team Score */}
           <div className="bg-gradient-to-r from-red-700 to-red-500 text-white py-3 px-6 rounded-r-full flex items-center gap-4 shadow-lg shadow-red-500/30">
             <div className="text-3xl font-bold">{gameState.redScore}</div>
@@ -501,11 +501,11 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
               {roomCode}
             </h2>
             {buzzerPlayer ? (
-              <div className="text-sm px-4 py-1 rounded-full bg-yellow-500 text-black font-bold">
+              <div className="text-sm px-4 py-1 rounded-full bg-yellow-500 text-black font-bold arabic-text">
                 {buzzerPlayer} ضغط الجرس!
               </div>
             ) : (
-              <div className="text-sm px-4 py-1 rounded-full text-gray-400">اضغط الجرس للإجابة</div>
+              <div className="text-sm px-4 py-1 rounded-full text-gray-400 arabic-text">اضغط الجرس للإجابة</div>
             )}
           </div>
 
@@ -517,7 +517,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
         </div>
 
         {/* Team Players */}
-        <div className="flex justify-between mb-10">
+        <div className="flex justify-between mb-3">
           {/* Red Team Players */}
           <div className="bg-red-500/20 text-white py-3 px-6 rounded-lg shadow-md w-64">
             <div className="flex items-center gap-2 mb-2">
@@ -564,7 +564,6 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
             onClick={onLeaveRoom}
             className="mt-8 bg-gray-700 hover:bg-gray-800 text-white px-6 py-2 rounded-lg flex items-center gap-2 transition-all"
           >
-            <ArrowLeft className="w-4 h-4" />
             <span className="arabic-text">مغادرة الغرفة</span>
           </button>
         </div>
@@ -674,11 +673,11 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
             {roomCode}
           </h2>
           {buzzerPlayer ? (
-            <div className="text-sm px-4 py-1 rounded-full bg-yellow-500 text-black font-bold">
+            <div className="text-sm px-4 py-1 rounded-full bg-yellow-500 text-black font-bold arabic-text">
               {buzzerPlayer} ضغط الجرس!
             </div>
           ) : (
-            <div className="text-sm px-4 py-1 rounded-full text-gray-400">اضغط الجرس للإجابة</div>
+            <div className="text-sm px-4 py-1 rounded-full text-gray-400 arabic-text">اضغط الجرس للإجابة</div>
           )}
         </div>
 
@@ -690,7 +689,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
       </div>
 
       {/* Team Players */}
-      <div className="flex justify-between mb-6">
+      <div className="flex justify-between mb-3">
         {/* Red Team Players */}
         <div className="bg-red-500/20 text-white py-3 px-6 rounded-lg shadow-md w-64">
           <div className="flex items-center gap-2 mb-2">
@@ -727,40 +726,40 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
       </div>
 
       <div className="flex">
-        {/* Control Buttons */}
-        <div className="w-16 flex flex-col gap-3 mr-6">
+        {/* Control Buttons - Fixed Width */}
+        <div className="w-24 flex flex-col gap-3 mr-4 shrink-0">
           <button
             className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 rounded-lg flex items-center justify-center text-white shadow-lg shadow-blue-500/30 transition-transform hover:scale-105"
             onClick={handleResetGame}
-            title="Reset Game"
+            title="إعادة اللعبة"
           >
-            <span className="font-bold">R</span>
+            <span className="font-bold arabic-text">إ</span>
           </button>
           <button
             className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 rounded-lg flex items-center justify-center text-white shadow-lg shadow-purple-500/30 transition-transform hover:scale-105"
             onClick={handleStopGame}
-            title="Stop Game"
+            title="إغلاق اللعبة"
           >
-            <span className="font-bold">S</span>
+            <span className="font-bold arabic-text">غ</span>
           </button>
           <button
             className="w-12 h-12 bg-gradient-to-br from-amber-600 to-amber-800 hover:from-amber-700 hover:to-amber-900 rounded-lg flex items-center justify-center text-white shadow-lg shadow-amber-500/30 transition-transform hover:scale-105"
             onClick={handleResetBuzzer}
-            title="Reset Buzzer"
+            title="إعادة الجرس"
           >
-            <span className="font-bold">B</span>
+            <span className="font-bold arabic-text">ج</span>
           </button>
           <button
             onClick={onLeaveRoom}
             className="w-12 h-12 bg-gradient-to-br from-gray-700 to-gray-900 hover:from-gray-800 hover:to-gray-950 rounded-lg flex items-center justify-center text-white shadow-lg shadow-gray-500/30 transition-transform hover:scale-105 mt-auto"
-            title="Leave Room"
+            title="مغادرة"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <span className="font-bold arabic-text mr-[-2px]">خ</span>
           </button>
         </div>
 
-        {/* Main Game Board */}
-        <div className="flex-1 flex justify-center items-center max-w-3xl mx-auto">
+        {/* Center Container - Take remaining space and center the board */}
+        <div className="grow flex justify-center items-center mt-[-2rem]">
           <GameBoard
             board={gameState.board}
             letters={gameState.letters || []}
@@ -768,6 +767,9 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
             onTileUpdate={handleTileUpdate}
           />
         </div>
+        
+        {/* Empty space to balance the layout */}
+        <div className="w-24 shrink-0"></div>
       </div>
     </div>
   )

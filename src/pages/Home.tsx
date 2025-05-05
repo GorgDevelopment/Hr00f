@@ -14,8 +14,8 @@ const Home: React.FC<HomeProps> = ({ onCreateRoom, onJoinRoom }) => {
   const [username, setUsername] = useState("")
   const [error, setError] = useState("")
   const [showTeamNames, setShowTeamNames] = useState(false)
-  const [greenTeamName, setGreenTeamName] = useState("Green Team")
-  const [redTeamName, setRedTeamName] = useState("Red Team")
+  const [greenTeamName, setGreenTeamName] = useState("الفريق الأخضر")
+  const [redTeamName, setRedTeamName] = useState("الفريق الأحمر")
   const [isLoading, setIsLoading] = useState(false)
 
   const handleCreateRoom = async () => {
@@ -76,10 +76,10 @@ const Home: React.FC<HomeProps> = ({ onCreateRoom, onJoinRoom }) => {
 
       <div className="max-w-md w-full space-y-8 relative z-10">
         <div className="text-center">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent mb-2">
-            Letters Competition
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent mb-2 arabic-text">
+            مسابقة الحروف
           </h1>
-          <p className="text-gray-400">Create or join a game room to start!</p>
+          <p className="text-gray-400 arabic-text">أنشئ أو انضم إلى غرفة للبدء!</p>
         </div>
 
         <div className="space-y-4">
@@ -89,40 +89,40 @@ const Home: React.FC<HomeProps> = ({ onCreateRoom, onJoinRoom }) => {
               disabled={isLoading}
               className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 
                 text-white px-6 py-4 rounded-xl flex items-center justify-center gap-3 transition-all duration-300
-                shadow-lg shadow-purple-500/25 transform hover:scale-105 disabled:opacity-70 disabled:transform-none"
+                shadow-lg shadow-purple-500/25 transform hover:scale-105 disabled:opacity-70 disabled:transform-none arabic-text"
             >
               {isLoading ? (
                 <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
               ) : (
                 <Users className="w-5 h-5" />
               )}
-              <span>Create New Room</span>
+              <span>إنشاء غرفة جديدة</span>
             </button>
           ) : (
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-800 to-purple-700 rounded-xl opacity-50" />
               <div className="relative bg-gray-800 p-6 rounded-xl space-y-4">
-                <h3 className="text-xl font-bold text-center mb-4">Team Names</h3>
+                <h3 className="text-xl font-bold text-center mb-4 arabic-text">أسماء الفرق</h3>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-300">Green Team Name</label>
+                  <label className="block text-sm font-medium text-gray-300 arabic-text">اسم الفريق الأخضر</label>
                   <input
                     type="text"
                     value={greenTeamName}
                     onChange={(e) => setGreenTeamName(e.target.value)}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    placeholder="Green Team"
+                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 arabic-text text-right"
+                    placeholder="الفريق الأخضر"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-300">Red Team Name</label>
+                  <label className="block text-sm font-medium text-gray-300 arabic-text">اسم الفريق الأحمر</label>
                   <input
                     type="text"
                     value={redTeamName}
                     onChange={(e) => setRedTeamName(e.target.value)}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-                    placeholder="Red Team"
+                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 arabic-text text-right"
+                    placeholder="الفريق الأحمر"
                   />
                 </div>
 
@@ -130,20 +130,20 @@ const Home: React.FC<HomeProps> = ({ onCreateRoom, onJoinRoom }) => {
                   <button
                     onClick={() => setShowTeamNames(false)}
                     disabled={isLoading}
-                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg transition-all duration-300 disabled:opacity-70"
+                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg transition-all duration-300 disabled:opacity-70 arabic-text"
                   >
-                    Back
+                    رجوع
                   </button>
                   <button
                     onClick={handleCreateRoom}
                     disabled={isLoading}
                     className="flex-1 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 
-                      text-white px-4 py-3 rounded-lg transition-all duration-300 disabled:opacity-70"
+                      text-white px-4 py-3 rounded-lg transition-all duration-300 disabled:opacity-70 arabic-text"
                   >
                     {isLoading ? (
                       <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mx-auto"></div>
                     ) : (
-                      "Create"
+                      "إنشاء"
                     )}
                   </button>
                 </div>
@@ -155,24 +155,24 @@ const Home: React.FC<HomeProps> = ({ onCreateRoom, onJoinRoom }) => {
             <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl opacity-50" />
             <div className="relative bg-gray-800 p-6 rounded-xl space-y-4">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-300">Room Code</label>
+                <label className="block text-sm font-medium text-gray-300 arabic-text">رمز الغرفة</label>
                 <input
                   type="text"
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter room code"
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
+                  placeholder="أدخل رمز الغرفة"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-300">Username</label>
+                <label className="block text-sm font-medium text-gray-300 arabic-text">اسم المستخدم</label>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter username"
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
+                  placeholder="أدخل اسم المستخدم"
                 />
               </div>
 
@@ -181,19 +181,19 @@ const Home: React.FC<HomeProps> = ({ onCreateRoom, onJoinRoom }) => {
                 disabled={isLoading}
                 className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700
                   text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300
-                  shadow-lg shadow-blue-500/25 transform hover:scale-105 disabled:opacity-70 disabled:transform-none"
+                  shadow-lg shadow-blue-500/25 transform hover:scale-105 disabled:opacity-70 disabled:transform-none arabic-text"
               >
                 {isLoading ? (
                   <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
                 ) : (
                   <LogIn className="w-5 h-5" />
                 )}
-                <span>Join Room</span>
+                <span>انضم للغرفة</span>
               </button>
             </div>
           </div>
 
-          {error && <div className="text-red-500 text-center text-sm">{error}</div>}
+          {error && <div className="text-red-500 text-center text-sm arabic-text">{error}</div>}
         </div>
       </div>
     </div>

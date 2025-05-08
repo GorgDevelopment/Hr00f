@@ -91,25 +91,69 @@ const generateNumericCode = (length = 6): string => {
 }
 
 export const generateRandomLetters = (rows: number, cols: number): string[][] => {
-  const ARABIC_LETTERS = "١٢٣٤٥٦٧٨٩أبتثجحخدذرزسشصضطظعغفقكلمنهوي".split("")
-  const availableLetters = [...ARABIC_LETTERS]
+  // Define separate arrays for numbers and letters
+  const ARABIC_NUMBERS = "١٢٣٤٥".split("")  // Only numbers 1-5
+  const ARABIC_LETTERS = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي".split("") // Letters only
+  
+  // Create a pool of all available characters, but limit numbers
+  const numberCount = Math.min(5, Math.floor(Math.random() * 5) + 1) // Random between 1-5 numbers
+  
+  // Create a random selection of numbers (up to 5)
+  const selectedNumbers = [...ARABIC_NUMBERS]
+  for (let i = selectedNumbers.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[selectedNumbers[i], selectedNumbers[j]] = [selectedNumbers[j], selectedNumbers[i]]
+  }
+  const limitedNumbers = selectedNumbers.slice(0, numberCount)
+  
+  // Combine with letters
+  const availableLetters = [...ARABIC_LETTERS, ...limitedNumbers]
+  
+  // Shuffle all available characters
   for (let i = availableLetters.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
     ;[availableLetters[i], availableLetters[j]] = [availableLetters[j], availableLetters[i]]
   }
+  
   const board = Array.from({ length: rows }, () => Array(cols).fill(""))
   let letterIndex = 0
+  
+  // Track how many numbers we've placed
+  let numbersPlaced = 0
+  const maxNumbers = Math.min(5, numberCount)
+  
   for (let row = 1; row < rows - 1; row++) {
     for (let col = 1; col < cols - 1; col++) {
       if (letterIndex >= availableLetters.length) {
-        for (let i = availableLetters.length - 1; i > 0; i--) {
+        // If we need to reshuffle, only use letters if we already placed max numbers
+        const charactersToUse = (numbersPlaced >= maxNumbers) 
+          ? [...ARABIC_LETTERS] 
+          : [...ARABIC_LETTERS, ...limitedNumbers.slice(numbersPlaced)]
+        
+        for (let i = charactersToUse.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1))
-          ;[availableLetters[i], availableLetters[j]] = [availableLetters[j], availableLetters[i]]
+          ;[charactersToUse[i], charactersToUse[j]] = [charactersToUse[j], charactersToUse[i]]
         }
+        
+        availableLetters.length = 0
+        availableLetters.push(...charactersToUse)
         letterIndex = 0
       }
 
-      board[row][col] = availableLetters[letterIndex++]
+      const nextChar = availableLetters[letterIndex++]
+      board[row][col] = nextChar
+      
+      // If we placed a number, increment our counter
+      if (ARABIC_NUMBERS.includes(nextChar)) {
+        numbersPlaced++
+        
+        // If we reached max numbers, remove remaining numbers from the pool
+        if (numbersPlaced >= maxNumbers) {
+          const lettersOnly = availableLetters.filter(char => !ARABIC_NUMBERS.includes(char))
+          availableLetters.length = 0
+          availableLetters.push(...lettersOnly)
+        }
+      }
     }
   }
 

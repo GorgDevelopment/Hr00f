@@ -10,6 +10,8 @@ export interface Game {
     greenScore: number
     redScore: number
     letters?: string[][]
+    greenConnections?: boolean
+    redConnections?: boolean
   }
   current_team: "red" | "green"
   winner: "red" | "green" | null
@@ -129,6 +131,8 @@ export const createGame = (greenTeamName: string, redTeamName: string): Game => 
         greenScore: 0,
         redScore: 0,
         letters: letters,
+        greenConnections: false,
+        redConnections: false,
       },
       current_team: "green",
       winner: null,

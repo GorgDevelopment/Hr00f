@@ -21,6 +21,8 @@ interface GameState {
   greenScore: number
   redScore: number
   letters?: string[][]
+  greenConnections?: boolean
+  redConnections?: boolean
 }
 
 interface GameRoomProps {
@@ -36,6 +38,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
     greenScore: 0,
     redScore: 0,
     letters: Array.from({ length: 7 }, () => Array(7).fill("أ")),
+    greenConnections: false,
+    redConnections: false,
   })
   const [currentTeam, setCurrentTeam] = useState<"red" | "green">("green")
   const [buzzerActive, setBuzzerActive] = useState(true)
@@ -62,7 +66,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
       try {
         // Get game data
         const game = await getGame(roomCode)
-        if (isMounted) {
+        if (isMounted && game) {
+          console.log("Loaded game state:", game.current_state);
           setGameState(game.current_state)
           setCurrentTeam(game.current_team)
           setGreenTeamName(game.green_team_name)
@@ -76,9 +81,9 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
 
         // Get buzzer state
         const buzzerState = await getBuzzerState(roomCode)
-        if (isMounted) {
-          setBuzzerActive(buzzerState.active === 1)
-          if (buzzerState.active === 0 && buzzerState.buzzed_player) {
+        if (isMounted && buzzerState) {
+          setBuzzerActive(!!buzzerState.active)
+          if (!buzzerState.active && buzzerState.buzzed_player) {
             setBuzzerPlayer(buzzerState.buzzed_player)
             setShowBuzzerConfetti(true)
           } else {
@@ -139,14 +144,39 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
 
     const newBoard = gameState.board.map((r) => [...r])
     newBoard[row][col] = color || ""
+    
+    // Check for connections and update scores
+    let greenScore = gameState.greenScore
+    let redScore = gameState.redScore
+    let greenConnections = gameState.greenConnections || false
+    let redConnections = gameState.redConnections || false
+
+    // Check for green connection (top to bottom)
+    const hasGreenConnection = hasGreenPath(newBoard)
+    if (hasGreenConnection && !greenConnections) {
+      greenScore += 1
+      greenConnections = true
+    } else if (!hasGreenConnection) {
+      greenConnections = false
+    }
+
+    // Check for red connection (left to right)
+    const hasRedConnection = hasRedPath(newBoard)
+    if (hasRedConnection && !redConnections) {
+      redScore += 1
+      redConnections = true
+    } else if (!hasRedConnection) {
+      redConnections = false
+    }
+
     const winResult = checkWinCondition(newBoard)
-    const greenCount = newBoard.flat().filter((tile) => tile === "green").length
-    const redCount = newBoard.flat().filter((tile) => tile === "red").length
     const newGameState = {
       ...gameState,
       board: newBoard,
-      greenScore: greenCount,
-      redScore: redCount,
+      greenScore: greenScore,
+      redScore: redScore,
+      greenConnections: greenConnections,
+      redConnections: redConnections,
     }
 
     const nextTeam = currentTeam === "red" ? "green" : "red"
@@ -309,15 +339,52 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
     }
   }
 
+  // Keep this function for resetting just the board, preserving scores
   const handleResetGame = async () => {
     if (!isHost) return
     const newLetters = winner ? generateRandomLetters(7, 7) : gameState.letters
+    
+    console.log("Resetting game with scores:", gameState.greenScore, gameState.redScore);
 
+    const newGameState = {
+      board: Array.from({ length: 7 }, () => Array(7).fill("")),
+      greenScore: gameState.greenScore,
+      redScore: gameState.redScore,
+      letters: newLetters,
+      greenConnections: false,
+      redConnections: false,
+    }
+
+    try {
+      await updateGame(roomCode, {
+        current_state: newGameState,
+        current_team: "green",
+        winner: null,
+      })
+
+      await handleResetBuzzer()
+      setGameState(newGameState)
+      setWinner(null)
+      setShowWinnerPanel(false)
+    } catch (err) {
+      console.error("Error resetting game:", err)
+    }
+  }
+
+  // This function resets everything including scores
+  const handleGlobalReset = async () => {
+    if (!isHost) return
+    
+    // Reset everything including scores
+    const newLetters = generateRandomLetters(7, 7)
+    
     const newGameState = {
       board: Array.from({ length: 7 }, () => Array(7).fill("")),
       greenScore: 0,
       redScore: 0,
       letters: newLetters,
+      greenConnections: false,
+      redConnections: false,
     }
 
     try {
@@ -646,7 +713,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
                 onClick={handleResetGame}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg shadow-blue-500/30 text-xl font-bold arabic-text"
               >
-                إعادة اللعبة
+                جولة جديدة        
               </button>
               <button
                 onClick={handleStopGame}
@@ -733,21 +800,21 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
             onClick={handleResetGame}
             title="إعادة اللعبة"
           >
-            <span className="font-bold arabic-text">إ</span>
+            <span className="font-bold">R</span>
           </button>
           <button
             className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 rounded-lg flex items-center justify-center text-white shadow-lg shadow-purple-500/30 transition-transform hover:scale-105"
             onClick={handleStopGame}
             title="إغلاق اللعبة"
           >
-            <span className="font-bold arabic-text">غ</span>
+            <span className="font-bold">S</span>
           </button>
           <button
             className="w-12 h-12 bg-gradient-to-br from-amber-600 to-amber-800 hover:from-amber-700 hover:to-amber-900 rounded-lg flex items-center justify-center text-white shadow-lg shadow-amber-500/30 transition-transform hover:scale-105"
             onClick={handleResetBuzzer}
             title="إعادة الجرس"
           >
-            <span className="font-bold arabic-text">ج</span>
+            <span className="font-bold">B</span>
           </button>
           <button
             onClick={onLeaveRoom}

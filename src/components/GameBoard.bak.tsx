@@ -67,35 +67,29 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, letters, isHost, onTileUpd
     }
 
     .honeycomb-grid {
-      --s: 80px;
-      --gap: 0px;
+      --s: 80px;  /* Slightly smaller for better fit */
+      --gap: 2px;
       --h: calc(var(--s) * 1.1547);
       display: flex;
-      flex-direction: column;
-      padding-top: calc(var(--h)/4 + var(--gap)/2);
+      flex-direction: row;  /* Changed to row to create horizontal grid */
+      padding: calc(var(--gap)/2);
       margin: 0 auto;
       width: fit-content;
-      transform: rotate(90deg); /* Rotate the entire grid */
     }
 
-    .honeycomb-row {
+    .honeycomb-column {
       display: flex;
-      height: calc(var(--h) * 0.75);
-      margin-bottom: var(--gap);
+      flex-direction: column; /* Each column is vertical */
+      width: calc(var(--s) * 0.75);
+      margin-right: var(--gap);
     }
 
-    .honeycomb-row:first-child {
-      height: calc(var(--h) * 0.75 - var(--gap));
-      margin-bottom: calc(var(--gap) * 2);
+    .honeycomb-column:nth-child(even) {
+      margin-top: calc(var(--h)/2); /* Shift every other column down */
     }
 
-    .honeycomb-row:last-child {
-      height: calc(var(--h) * 0.75);
-      margin-bottom: 0;
-    }
-
-    .honeycomb-row:nth-child(even) {
-      margin-left: calc(var(--s)/2 + var(--gap)/2);
+    .honeycomb-column:last-child {
+      margin-right: 0;
     }
 
     .hexagon {
@@ -106,7 +100,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, letters, isHost, onTileUpd
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: var(--gap);
+      margin-bottom: var(--gap);
       transition: all 0.3s ease;
     }
 
@@ -161,7 +155,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, letters, isHost, onTileUpd
 
     @media (min-width: 1200px) {
       .honeycomb-grid {
-        --s: 85px;
+        --s: 100px;
       }
     }
   `}
@@ -174,70 +168,69 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, letters, isHost, onTileUpd
         <div className="absolute inset-0 bg-purple-500/20 blur-3xl rounded-full w-1/3 h-1/3 mx-auto my-auto animate-pulse"></div>
 
         <div className="honeycomb-grid relative z-10 mx-auto">
-          {board.map((row, rowIndex) => (
-            <div key={`row-${rowIndex}`} className="honeycomb-row">
-              {row.map((tile, colIndex) => {
-                const isTopBorder = rowIndex === 0
-                const isBottomBorder = rowIndex === board.length - 1
-                const isLeftBorder = colIndex === 0
-                const isRightBorder = colIndex === row.length - 1
-
-                let bgColor = "bg-white/90"
-                // Original border coloring logic
-                if (isTopBorder || isBottomBorder) bgColor = "bg-green-500"
-                if (isLeftBorder || isRightBorder) bgColor = "bg-red-500"
+          {/* Transpose the board to create columns instead of rows */}
+          {Array.from({ length: board[0].length }).map((_, colIndex) => (
+            <div key={`col-${colIndex}`} className="honeycomb-column">
+              {board.map((row, rowIndex) => {
+                // Get the current tile from the transposed position
+                const tile = row[colIndex];
+                
+                // Set colors based on position in the rotated grid
+                // Now the left and right columns are RED
+                // The top and bottom rows are GREEN
+                let bgColor = "bg-blue-300" // Default inner cells are light blue
+                
+                // First and last column are RED
+                if (colIndex === 0 || colIndex === board[0].length - 1) {
+                  bgColor = "bg-red-500"
+                }
+                // First and last row are GREEN (but not the corners)
+                else if ((rowIndex === 0 || rowIndex === board.length - 1) && 
+                         colIndex !== 0 && colIndex !== board[0].length - 1) {
+                  bgColor = "bg-green-500"
+                }
+                
+                // Handle any explicitly set colors from game logic
                 if (tile === "green") bgColor = "bg-green-500"
                 if (tile === "red") bgColor = "bg-red-500"
 
                 const isEditable = isEditableTile(rowIndex, colIndex)
+                const letter = letters?.[rowIndex]?.[colIndex] || ""
                 const isActive = activeTile?.row === rowIndex && activeTile?.col === colIndex
-                const isClicked = clickedTile?.row === rowIndex && clickedTile?.col === colIndex
-
+                
                 return (
                   <div
-                    key={`${rowIndex}-${colIndex}`}
-                    className={`
-                      ${bgColor} hexagon 
-                      ${isActive ? "active" : ""} 
-                      ${!isEditable ? "border" : ""}
-                      flex items-center justify-center 
-                      text-2xl font-bold
-                      transition-all duration-300
-                      ${isEditable ? "cursor-pointer" : "cursor-default"}
-                    `}
+                    key={`tile-${rowIndex}-${colIndex}`}
+                    className={`hexagon ${bgColor} ${isActive ? "active" : ""} ${isEditable ? "" : "border"}`}
                     onClick={() => handleClick(rowIndex, colIndex)}
                   >
-                    {isClicked ? (
-                      <div className="dots-menu">
+                    <span className="text-lg font-bold text-gray-700">{letter}</span>
+                    
+                    {/* Show color selection dots if tile is clicked */}
+                    {isWaitingForDots && clickedTile?.row === rowIndex && clickedTile?.col === colIndex && (
+                      <div className="absolute top-full mt-2 dots-menu shadow-lg bg-white/80 backdrop-blur-sm p-2 rounded-full border border-gray-200">
                         <button
+                          className="dot-button bg-green-500"
                           onClick={(e) => {
                             e.stopPropagation()
                             handleDotClick("green", rowIndex, colIndex)
                           }}
-                          className="dot-button bg-green-500"
                         ></button>
                         <button
+                          className="dot-button bg-red-500"
                           onClick={(e) => {
                             e.stopPropagation()
                             handleDotClick("red", rowIndex, colIndex)
                           }}
-                          className="dot-button bg-red-500"
                         ></button>
                         <button
+                          className="dot-button bg-blue-300"
                           onClick={(e) => {
                             e.stopPropagation()
                             handleDotClick(null, rowIndex, colIndex)
                           }}
-                          className="dot-button bg-white"
                         ></button>
                       </div>
-                    ) : (
-                      isEditable &&
-                      tile === "" && (
-                        <span className={`${isActive ? "opacity-100" : "opacity-80"} text-black text-3xl`} style={{ transform: "rotate(-90deg)" }}>
-                          {letters && letters[rowIndex] && letters[rowIndex][colIndex]}
-                        </span>
-                      )
                     )}
                   </div>
                 )

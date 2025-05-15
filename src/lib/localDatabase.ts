@@ -91,12 +91,11 @@ const generateNumericCode = (length = 6): string => {
 }
 
 export const generateRandomLetters = (rows: number, cols: number): string[][] => {
-  const ARABIC_NUMBERS = "١٢٣٤٥".split("")  
-  //const ARABIC_LETTERS = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي".split("")
+  const ARABIC_NUMBERS = "٣٤".split("")  
   const ARABIC_LETTERS = "أبتثجحخدذرزسشصضطعغفقكلمنهوي".split("")
   
-  // Determine how many numbers to include (1-5)
-  const numberCount = Math.min(5, Math.floor(Math.random() * 5) + 1)
+  // Determine how many numbers to include (3-4)
+  const numberCount = Math.min(2, Math.floor(Math.random() * 2) + 1)
   
   // Randomly select which numbers to use
   const shuffledNumbers = [...ARABIC_NUMBERS].sort(() => Math.random() - 0.5)

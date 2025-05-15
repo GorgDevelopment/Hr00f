@@ -205,7 +205,7 @@ app.post('/api/players', async (req, res) => {
 });
 
 function generateRandomLetters(rows, cols) {
-  const ARABIC_LETTERS = "١٢٣٤٥٦٧٨٩أبتثجحخدذرزسشصضطظعغفقكلمنهوي".split("");
+  const ARABIC_LETTERS = "١٢٣٤٥٦٧٨٩أبتثجحخدذرزسشصضطظعغفقكلمنويھ".split("");
   const availableLetters = [...ARABIC_LETTERS];
   for (let i = availableLetters.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

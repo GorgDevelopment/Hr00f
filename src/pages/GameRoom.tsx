@@ -342,10 +342,11 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
   // Keep this function for resetting just the board, preserving scores
   const handleResetGame = async () => {
     if (!isHost) return
-    const newLetters = winner ? generateRandomLetters(7, 7) : gameState.letters
     
-    console.log("Resetting game with scores:", gameState.greenScore, gameState.redScore);
-
+    // Generate new random letters
+    const newLetters = generateRandomLetters(7, 7)
+    
+    // Create a completely fresh board
     const newGameState = {
       board: Array.from({ length: 7 }, () => Array(7).fill("")),
       greenScore: gameState.greenScore,
@@ -356,16 +357,19 @@ const GameRoom: React.FC<GameRoomProps> = ({ roomCode, isHost, username, onLeave
     }
 
     try {
+      // Update game state in database
       await updateGame(roomCode, {
         current_state: newGameState,
-        current_team: "green",
+        current_team: currentTeam,
         winner: null,
       })
 
-      await handleResetBuzzer()
+      // Update local state
       setGameState(newGameState)
       setWinner(null)
       setShowWinnerPanel(false)
+      
+      console.log("Board reset with new letters:", newLetters);
     } catch (err) {
       console.error("Error resetting game:", err)
     }

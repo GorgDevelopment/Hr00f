@@ -57,16 +57,16 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, letters, isHost, onTileUpd
   })
 
   return (
-    <div className="flex justify-center items-center" style={{ marginTop: '100px', width: '100%' }}>
+    <div className="flex justify-center items-center" style={{ marginTop: '120px', width: '100%' }}>
       <style>
         {`
           .hex-grid{
             display: grid;
             /* Define grid columns for horizontal interlocking (approx 75% of hexagon width) */
-            grid-template-columns: repeat(7, 130px); /* Increased from 110px */
+            grid-template-columns: repeat(7, 160px); /* Increased from 130px */
 
             /* Define grid rows for vertical spacing (half of hexagon height) */
-            grid-template-rows: repeat(7, 75px); /* Increased from 63px */
+            grid-template-rows: repeat(7, 92px); /* Increased from 75px */
 
             /* Remove gap as margins will handle spacing */
             /* gap: 5px; */
@@ -82,8 +82,8 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, letters, isHost, onTileUpd
 
           .hex-grid .hex{
             /* Set hexagon width and height */
-            width: 170px; /* Increased from 145px */
-            height: 85px; /* Increased from 73px */
+            width: 210px; /* Increased from 170px */
+            height: 105px; /* Increased from 85px */
 
             /* Add light black outline using box-shadow */
             box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2); /* Adjust spread and alpha for desired outline */
@@ -103,7 +103,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, letters, isHost, onTileUpd
             
             /* Text styling */
             color: black;
-            font-size: 2.5rem; /* Increased from 2.2rem */
+            font-size: 3rem; /* Increased from 2.5rem */
             font-weight: bold;
           }
 
@@ -118,7 +118,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, letters, isHost, onTileUpd
           .hex-grid .hex:nth-child(7n + 5), /* Column 5 */
           .hex-grid .hex:nth-child(7n + 7)  /* Column 7 */
           {
-            margin-top: 112px; /* Adjusted from 95px */
+            margin-top: 138px; /* Adjusted from 112px */
             gap: 0px;
           }
 
@@ -127,7 +127,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, letters, isHost, onTileUpd
           .hex-grid .hex:nth-child(7n + 4), /* Column 4 */
           .hex-grid .hex:nth-child(7n + 6)  /* Column 6 */
           {
-            margin-top: 75px; /* Adjusted from 63px */
+            margin-top: 92px; /* Adjusted from 75px */
             gap: 0px;
           }
 
